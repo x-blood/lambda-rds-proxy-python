@@ -35,6 +35,12 @@ provider:
   name: aws
   runtime: python3.7
   region: ap-northeast-1
+  environment:
+    DB_HOST_PROXY: ${ssm:/lambda-rds-proxy/db-host-proxy}
+    DB_HOST: ${ssm:/lambda-rds-proxy/db-host}
+    DB_USER: ${ssm:/lambda-rds-proxy/db-user}
+    DB_PASS: ${ssm:/lambda-rds-proxy/db-pass}
+    DB_NAME: ${ssm:/lambda-rds-proxy/db-name}
 
 # you can overwrite defaults here
 #  stage: dev
@@ -75,6 +81,12 @@ functions:
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
+    vpc:
+      securityGroupIds:
+        - ${ssm:/lambda-rds-proxy/security-group-id}
+      subnetIds:
+        - ${ssm:/lambda-rds-proxy/subnet-a}
+        - ${ssm:/lambda-rds-proxy/subnet-c}
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
