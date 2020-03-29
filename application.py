@@ -1,6 +1,7 @@
 from flask import Flask
 import os
 import logging
+from infra.mysql import MySQL
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -11,16 +12,23 @@ db_host = os.environ['DB_HOST_PROXY']
 db_user = os.environ['DB_USER']
 db_name = os.environ['DB_NAME']
 db_pass = os.environ['DB_PASS']
-db_source = db_user + ":" + db_pass + "@tcp(" + db_host + ":3306)/" + db_name
+dns = {
+    'user': db_user,
+    'host': db_host,
+    'password': db_pass,
+    'database': db_name
+}
+db = MySQL(**dns)
+
 
 @app.route("/hello")
 def hello():
-    logger.info(db_host)
-    logger.info(db_user)
-    logger.info(db_name)
-    logger.info(db_pass)
-    logger.info(db_source)
+    stmt = 'SELECT * FROM test WHERE id = ?'
+    record = db.query(stmt, '1', prepared=True)
+    logger.info(record)
+
     return "Hello"
+
 
 @app.route("/world")
 def world():
