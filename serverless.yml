@@ -31,6 +31,12 @@ custom:
   pythonRequirements:
     dockerizePip: non-linux
 
+package:
+  exclude:
+    - './serverless/**'
+    - './myvenv/**'
+    - './node_modules/**'
+
 provider:
   name: aws
   runtime: python3.7
